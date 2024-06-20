@@ -106,29 +106,48 @@ export type GetMeetingInvitationResponse = {
 };
 export type GetMeetingRecordingsResponse = RecordingMeeting;
 
-export default function(zoomRequest: ReturnType<typeof request>) {
-  const ListMeetings = function(userId: string, params?: ListMeetingsParams) {
+export type RegistrantQuestion = {
+  field_name: 'last_name' | 'address' | 'city' | 'country' | 'zip' | 'state' | 'phone' | 'industry' | 'org' | 'job_title' | 'purchasing_time_frame' | 'role_in_purchase_process' | 'no_of_employees' | 'comments';
+  required: boolean;
+};
+
+export type RegistrantCustomQuestion = {
+  answers: string[];
+  required: boolean;
+  title: string;
+  type: 'short' | 'single';
+};
+
+export type MeetingRegistrantQuestions = {
+  custom_questions?: RegistrantCustomQuestion[];
+  questions?: RegistrantQuestion[];
+};
+
+export type UpdateRegistrantQuestions = MeetingRegistrantQuestions;
+
+export default function (zoomRequest: ReturnType<typeof request>) {
+  const ListMeetings = function (userId: string, params?: ListMeetingsParams) {
     return zoomRequest<ListMeetingsResponse>({
       method: 'GET',
       path: `/users/${userId}/meetings`,
       params: params
     });
   };
-  const CreateMeeting = function(userId: string, meeting: Meeting) {
+  const CreateMeeting = function (userId: string, meeting: Meeting) {
     return zoomRequest<Meeting>({
       method: 'POST',
       path: `/users/${userId}/meetings`,
       body: meeting
     });
   };
-  const GetMeeting = function(meetingId: string, params?: GetMeetingParams) {
+  const GetMeeting = function (meetingId: string, params?: GetMeetingParams) {
     return zoomRequest<Meeting>({
       method: 'GET',
       path: `/meetings/${meetingId}`,
       params: params
     });
   };
-  const UpdateMeeting = function(meetingId: string, meeting: Meeting, params?: GetMeetingParams) {
+  const UpdateMeeting = function (meetingId: string, meeting: Meeting, params?: GetMeetingParams) {
     return zoomRequest<{}>({
       method: 'PATCH',
       path: `/meetings/${meetingId}`,
@@ -143,21 +162,21 @@ export default function(zoomRequest: ReturnType<typeof request>) {
       body: body
     });
   };
-  const DeleteMeeting = function(meetingId: string, params?: DeleteMeetingParams) {
+  const DeleteMeeting = function (meetingId: string, params?: DeleteMeetingParams) {
     return zoomRequest<{}>({
       method: 'DELETE',
       path: `/meetings/${meetingId}`,
       params: params
     });
   };
-  const ListRegistrants = function(meetingId: string, params?: ListRegistrantsParams) {
+  const ListRegistrants = function (meetingId: string, params?: ListRegistrantsParams) {
     return zoomRequest<ListRegistrantsResponse>({
       method: 'GET',
       path: `/meetings/${meetingId}/registrants`,
       params: params
     });
   };
-  const AddRegistrant = function(meetingId: string, registrant: Registrant, params?: AddRegistrantParams) {
+  const AddRegistrant = function (meetingId: string, registrant: Registrant, params?: AddRegistrantParams) {
     return zoomRequest<AddRegistrantResponse>({
       method: 'POST',
       path: `/meetings/${meetingId}/registrants`,
@@ -165,7 +184,7 @@ export default function(zoomRequest: ReturnType<typeof request>) {
       body: registrant
     });
   };
-  const UpdateRegistrantStatus = function(
+  const UpdateRegistrantStatus = function (
     meetingId: string,
     body: UpdateRegistrantStatusBody,
     params?: UpdateRegistrantStatusParams
@@ -177,7 +196,7 @@ export default function(zoomRequest: ReturnType<typeof request>) {
       body: body
     });
   };
-  const GetMeetingInvitation = function(
+  const GetMeetingInvitation = function (
     meetingId: string
   ) {
     return zoomRequest<GetMeetingInvitationResponse>({
@@ -185,10 +204,17 @@ export default function(zoomRequest: ReturnType<typeof request>) {
       path: `/meetings/${meetingId}/invitation`,
     });
   };
-  const GetMeetingRecordings = function(meetingId: string) {
+  const GetMeetingRecordings = function (meetingId: string) {
     return zoomRequest<GetMeetingRecordingsResponse>({
       method: 'GET',
       path: `/meetings/${meetingId}/recordings`,
+    });
+  };
+  const UpdateRegistrationQuestions = function (meetingId: string, params?: UpdateRegistrantQuestions) {
+    return zoomRequest<{}>({
+      method: 'PATCH',
+      path: `/meetings/${meetingId}/registrants/questions`,
+      body: params
     });
   };
 
@@ -203,6 +229,7 @@ export default function(zoomRequest: ReturnType<typeof request>) {
     AddRegistrant,
     UpdateRegistrantStatus,
     GetMeetingInvitation,
-    GetMeetingRecordings
+    GetMeetingRecordings,
+    UpdateRegistrationQuestions,
   };
 }
