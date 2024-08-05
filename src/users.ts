@@ -58,6 +58,21 @@ export type ListUsersParams = {
 export type ListUserResponse = PaginatedResponse & {
   users: User[];
 };
+export type ListGroupMembersParams = {
+  page_size?: number;
+  page_number?: number;
+  next_page_token?: string;
+};
+export type ListGroupMembersResponse = PaginatedResponse & {
+  members: {
+    email: string,
+    first_name: string,
+    id: string,
+    last_name: string,
+    type: number,
+  }[],
+  total_records: number,
+};
 export type GetUserParams = {
   login_type?: UserLoginType;
 };
@@ -167,6 +182,13 @@ export default function(zoomRequest: ReturnType<typeof request>) {
       params: params
     });
   };
+  const ListGroupMembers = function(group_id: string, params?: ListGroupMembersParams) {
+    return zoomRequest<ListGroupMembersResponse>({
+      method: 'GET',
+      path: `/groups/${group_id}/members`,
+      params: params
+    });
+  };
   const GetUser = function(userId: string, params?: GetUserParams) {
     return zoomRequest<User>({
       method: 'GET',
@@ -226,6 +248,7 @@ export default function(zoomRequest: ReturnType<typeof request>) {
 
   return {
     ListUsers,
+    ListGroupMembers,
     GetUser,
     GetUserToken,
     CreateUser,
