@@ -28,6 +28,7 @@ export type MeetingType = 1 | 2 | 3 | 8;
 
 export type MeetingSettings = {
   host_video?: boolean;
+  focus_mode?: boolean;
   participant_video?: boolean;
   cn_meeting?: boolean;
   in_meeting?: boolean;
@@ -39,6 +40,13 @@ export type MeetingSettings = {
   registration_type?: RegistrationType;
   audio?: Audio;
   auto_recording?: AudioRecording;
+  breakout_room?: {
+    enable: boolean;
+    rooms: {
+      name: string;
+      participants: string[];
+    }[];
+  }
   alternative_hosts?: string;
   close_registration?: boolean;
   waiting_room?: boolean;
